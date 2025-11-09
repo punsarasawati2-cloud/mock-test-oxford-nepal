@@ -1,0 +1,107 @@
+// ✅ Supabase Initialization
+const supa = supabase.createClient(
+  "YOUR_URL",
+  "YOUR_PUBLIC_KEY"
+);
+
+// ✅ Load Questions
+let questions = [];
+let current = 0;
+let correct = 0;
+let logs = [];
+
+async function loadQuestions() {
+  let { data } = await supa.from("questions").select("*");
+  questions = data;
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+
+  document.getElementById("question").innerHTML = `
+      <img src="${q.image_url}">
+  `;
+
+  document.getElementById("choices").innerHTML = `
+    <p><label><input type="radio" name="opt" value="${q.option1}"> ${q.option1}</label></p>
+    <p><label><input type="radio" name="opt" value="${q.option2}"> ${q.option2}</label></p>
+    <p><label><input type="radio" name="opt" value="${q.option3}"> ${q.option3}</label></p>
+  `;
+}
+
+function nextQuestion() {
+  const sel = document.querySelector("input[name='opt']:checked");
+
+  if (!sel) {
+    alert("Select one answer");
+    return;
+  }
+
+  logs.push({
+    question: current + 1,
+    selected: sel.value,
+    correct: questions[current].correct
+  });
+
+  if (sel.value === questions[current].correct) correct++;
+
+  current++;
+
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById("quizBox").style.display = "none";
+  document.getElementById("resultBox").style.display = "block";
+  document.getElementById("score").innerText = 
+    `Score: ${correct} / ${questions.length}`;
+}
+
+// ✅ Insert Question from Admin Panel
+async function addQuestion() {
+  const img = document.getElementById("img").value;
+  const op1 = document.getElementById("op1").value;
+  const op2 = document.getElementById("op2").value;
+  const op3 = document.getElementById("op3").value;
+  const ans = document.getElementById("ans").value;
+
+  await supa.from("questions").insert({
+    image_url: img,
+    option1: op1,
+    option2: op2,
+    option3: op3,
+    correct: ans
+  });
+
+  alert("Question Added");
+  loadAdminQuestions();
+}
+
+// ✅ Load Admin Question List
+async function loadAdminQuestions() {
+  let { data } = await supa.from("questions").select("*");
+
+  document.getElementById("questionList").innerHTML =
+    data.map(q =>
+      `<p>ID: ${q.id} - <img src="${q.image_url}" width="50"> 
+        <button onclick="deleteQ(${q.id})">Delete</button></p>`
+    ).join('');
+}
+
+// ✅ Delete Question
+async function deleteQ(id) {
+  await supa.from("questions").delete().eq("id", id);
+  loadAdminQuestions();
+}
+
+// ✅ Auto load
+if (location.pathname.includes("admin.html")) {
+  loadAdminQuestions();
+} else {
+  loadQuestions();
+}
