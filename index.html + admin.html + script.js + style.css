@@ -1,1 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Mock Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
+<body>
+  <h2>Mock Test (JFT Style)</h2>
+
+  <div class="box" id="quizBox">
+    <div id="question"></div>
+    <div id="choices"></div>
+    <button onclick="nextQuestion()">Next</button>
+  </div>
+
+  <div class="box" id="resultBox" style="display:none;">
+    <h3>Test Complete</h3>
+    <p id="score"></p>
+    <button id="emailBtn">Send Score to Host</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+<h2>Admin Panel</h2>
+
+<div class="box">
+  <h3>Add Question</h3>
+
+  <input id="img" placeholder="Image URL"><br>
+  <input id="op1" placeholder="Option 1"><br>
+  <input id="op2" placeholder="Option 2"><br>
+  <input id="op3" placeholder="Option 3"><br>
+  <input id="ans" placeholder="Correct Answer"><br>
+
+  <button onclick="addQuestion()">Add Question</button>
+</div>
+
+<div class="box">
+  <h3>All Questions</h3>
+  <div id="questionList"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
